@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Weekly Marketing Scorecard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f2444;--navy2:#1a3a6b;--blue:#2563eb;--blue-lt:#dbeafe;
+  --teal:#0d9488;--teal-lt:#ccfbf1;--purple:#7c3aed;--purple-lt:#ede9fe;
+  --amber:#d97706;--amber-lt:#fef3c7;--red:#dc2626;--red-lt:#fee2e2;
+  --green:#16a34a;--green-lt:#dcfce7;--slate:#64748b;--slate-lt:#f1f5f9;
+  --border:#e2e8f0;--text:#1e293b;--text2:#475569;--white:#fff;
+  --radius:10px;--shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
+  --shadow-lg:0 8px 32px rgba(15,36,68,.13);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);
+  background:#eef2f7;min-height:100vh;
+  background-image:radial-gradient(ellipse 80% 40% at 50% -5%,rgba(37,99,235,.1) 0%,transparent 70%)}
+
+/* Header */
+.site-header{background:var(--navy);background-image:linear-gradient(135deg,var(--navy),var(--navy2));
+  position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.25)}
+.header-inner{max-width:940px;margin:0 auto;padding:16px 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px}
+.h-left{display:flex;align-items:center;gap:14px}
+.h-icon{width:40px;height:40px;background:var(--blue);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.h-title{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;line-height:1.2}
+.h-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+.h-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.prog-label{font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap}
+.prog-track{width:110px;height:5px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),#60a5fa);border-radius:99px;transition:width .4s ease;width:0%}
+
+/* Layout */
+.page{max-width:940px;margin:0 auto;padding:28px 20px 80px}
+
+/* Meta strip */
+.meta-strip{background:var(--white);border-radius:var(--radius);padding:22px 26px;
+  box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:18px;margin-bottom:20px;border-top:4px solid var(--navy)}
+@media(max-width:600px){.meta-strip{grid-template-columns:1fr}}
+
+/* Timer */
+.timer-bar{background:var(--amber-lt);border:1.5px solid #fcd34d;border-radius:var(--radius);
+  padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.timer-label{font-size:13px;font-weight:600;color:var(--amber);display:flex;align-items:center;gap:6px}
+#timer-display{font-family:'DM Serif Display',serif;font-size:26px;color:var(--amber);min-width:65px}
+.timer-target{font-size:12px;color:var(--amber);opacity:.75;margin-left:auto}
+.t-btn{padding:7px 15px;border-radius:7px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;transition:all .15s}
+#btn-start{background:var(--amber);color:#fff}
+#btn-start:hover{background:#b45309}
+#btn-stop{background:#fff;color:var(--amber);border:1.5px solid var(--amber);display:none}
+#btn-stop:hover{background:var(--amber-lt)}
+
+/* Section card */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden;transition:box-shadow .2s}
+.card:focus-within{box-shadow:var(--shadow-lg)}
+.card-header{padding:15px 22px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.card-header:hover{filter:brightness(1.05)}
+.card-num{width:27px;height:27px;border-radius:50%;background:rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Serif Display',serif;font-size:13px;color:#fff;flex-shrink:0}
+.card-title{font-family:'DM Serif Display',serif;font-size:17px;color:#fff;flex:1;line-height:1.2}
+.card-desc{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px}
+.chevron{color:rgba(255,255,255,.5);font-size:15px;transition:transform .3s;margin-left:auto;flex-shrink:0}
+.card.collapsed .chevron{transform:rotate(-90deg)}
+.card.collapsed .card-body{display:none}
+.card-body{padding:22px 24px}
+
+.s1 .card-header{background:linear-gradient(135deg,#0f2444,#1a3a6b)}
+.s2 .card-header{background:linear-gradient(135deg,#1e40af,#2563eb)}
+.s3 .card-header{background:linear-gradient(135deg,#0f766e,#0d9488)}
+.s4 .card-header{background:linear-gradient(135deg,#6d28d9,#7c3aed)}
+.s5 .card-header{background:linear-gradient(135deg,#92400e,#d97706)}
+.s6 .card-header{background:linear-gradient(135deg,#065f46,#059669)}
+.s7 .card-header{background:linear-gradient(135deg,#9f1239,#e11d48)}
+.s8 .card-header{background:linear-gradient(135deg,#1e293b,#475569)}
+
+/* Subsection */
+.sub{margin-bottom:20px}
+.sub:last-child{margin-bottom:0}
+.sub-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--slate);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.note-text{font-size:12px;color:var(--slate);font-style:italic;margin-bottom:14px}
+
+/* Fields */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg.one{grid-template-columns:1fr}
+@media(max-width:600px){.fg{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+label{font-size:12px;font-weight:600;color:var(--text2)}
+.req{color:var(--red)}
+
+input[type="text"],input[type="number"],input[type="date"],textarea,select{
+  border:1.5px solid var(--border);border-radius:7px;padding:9px 13px;
+  font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);
+  background:var(--white);transition:border-color .2s,box-shadow .2s;outline:none;width:100%}
+input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+input.err,textarea.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(220,38,38,.08)}
+textarea{resize:vertical;min-height:70px;line-height:1.55}
+textarea.sm{min-height:52px}
+
+/* KPI table */
+.kpi-tbl{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:16px}
+.kpi-tbl th{background:var(--navy);color:#fff;padding:9px 13px;font-weight:500;font-size:12px;text-align:left}
+.kpi-tbl th:not(:first-child){text-align:center}
+.kpi-tbl td{padding:0;border-bottom:1px solid var(--border)}
+.kpi-tbl tr:last-child td{border-bottom:none}
+.kpi-tbl tr:nth-child(even) td{background:var(--slate-lt)}
+.kpi-metric{padding:9px 13px;font-weight:600;font-size:13px;color:var(--navy)}
+.kpi-tbl input{border:none;background:transparent;padding:9px 11px;width:100%;
+  font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;text-align:center}
+.kpi-tbl .trend input{text-align:left}
+.kpi-tbl input:focus{background:var(--blue-lt)}
+
+/* Two-col label/input tables */
+.row-tbl{width:100%;border-collapse:collapse;font-size:14px}
+.row-tbl td{border:1px solid var(--border);padding:0;vertical-align:middle}
+.row-tbl tr:nth-child(odd) .rl{background:var(--blue-lt)}
+.row-tbl tr:nth-child(even) .rl{background:var(--slate-lt)}
+.row-tbl.teal tr:nth-child(odd) .rl{background:var(--teal-lt)}
+.row-tbl.teal tr:nth-child(even) .rl{background:#f0fdf9}
+.row-tbl.purple tr:nth-child(odd) .rl{background:var(--purple-lt)}
+.row-tbl.purple tr:nth-child(even) .rl{background:#f5f3ff}
+.rl{padding:10px 14px;font-weight:600;font-size:13px;color:var(--navy);width:38%;vertical-align:middle}
+.row-tbl.teal .rl{color:#065f46}
+.row-tbl.purple .rl{color:#5b21b6}
+.row-tbl textarea,.row-tbl input[type="text"]{border:none;border-radius:0;padding:10px 12px;background:transparent;min-height:46px}
+.row-tbl textarea:focus,.row-tbl input[type="text"]:focus{background:var(--blue-lt);box-shadow:none}
+.row-tbl.teal textarea:focus,.row-tbl.teal input:focus{background:var(--teal-lt)}
+.row-tbl.purple textarea:focus,.row-tbl.purple input:focus{background:var(--purple-lt)}
+
+/* Prospect table */
+.pro-tbl{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:16px}
+.pro-tbl th{background:var(--teal);color:#fff;padding:9px 13px;font-weight:500;font-size:12px}
+.pro-tbl th:not(:first-child){text-align:center}
+.pro-tbl td{padding:0;border-bottom:1px solid var(--border);vertical-align:middle}
+.pro-tbl tr:last-child td{border-bottom:none}
+.pro-tbl tr:nth-child(even) td{background:#f0fdf9}
+.pro-metric{padding:9px 13px;font-weight:600;font-size:13px;color:#065f46}
+.pro-tbl input{border:none;background:transparent;padding:9px 11px;width:100%;font-family:'DM Sans',sans-serif;font-size:14px;text-align:center;outline:none}
+.pro-tbl input:focus{background:var(--teal-lt)}
+.pro-tbl textarea{border:none;background:transparent;padding:9px 11px;min-height:44px;resize:vertical;width:100%;outline:none;font-family:'DM Sans',sans-serif;font-size:14px}
+.pro-tbl textarea:focus{background:var(--teal-lt)}
+
+/* Reviews table */
+.rev-tbl{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:16px}
+.rev-tbl th{background:var(--purple);color:#fff;padding:9px 13px;font-weight:500;font-size:12px}
+.rev-tbl th:not(:first-child){text-align:center}
+.rev-tbl td{padding:0;border-bottom:1px solid var(--border);vertical-align:middle}
+.rev-tbl tr:last-child td{border-bottom:none}
+.rev-tbl tr:nth-child(even) td{background:#f5f3ff}
+.rev-metric{padding:9px 13px;font-weight:600;font-size:13px;color:#5b21b6}
+.rev-tbl input{border:none;background:transparent;padding:9px 11px;width:100%;font-family:'DM Sans',sans-serif;font-size:14px;text-align:center;outline:none}
+.rev-tbl input:focus{background:var(--purple-lt)}
+.rev-tbl textarea{border:none;background:transparent;padding:9px 11px;min-height:44px;resize:vertical;width:100%;outline:none;font-family:'DM Sans',sans-serif;font-size:14px}
+.rev-tbl textarea:focus{background:var(--purple-lt)}
+
+/* Wins & Problems */
+.wp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.wp-grid{grid-template-columns:1fr}}
+.wp-col{border-radius:8px;overflow:hidden}
+.wp-head{padding:10px 16px;font-weight:600;font-size:13px;color:#fff}
+.wp-head.win{background:var(--green)}
+.wp-head.prob{background:var(--red)}
+.wp-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-bottom:1px solid rgba(0,0,0,.06)}
+.wp-item:last-child{border-bottom:none}
+.wp-num{font-weight:700;font-size:13px;margin-top:9px;flex-shrink:0}
+.wp-num.win{color:var(--green)}
+.wp-num.prob{color:var(--red)}
+.wp-col.wc{background:var(--green-lt)}
+.wp-col.pc{background:var(--red-lt)}
+
+/* Priorities */
+.pri-tbl{width:100%;border-collapse:collapse;font-size:14px}
+.pri-tbl th{background:#059669;color:#fff;padding:9px 13px;font-weight:500;font-size:12px}
+.pri-tbl th:first-child{text-align:center;width:34px}
+.pri-tbl td{padding:0;border-bottom:1px solid var(--border);vertical-align:middle}
+.pri-tbl tr:last-child td{border-bottom:none}
+.pri-tbl tr:nth-child(even) td{background:var(--green-lt)}
+.pri-n{padding:9px 11px;font-family:'DM Serif Display',serif;font-size:16px;color:#059669;text-align:center}
+.pri-tbl textarea,.pri-tbl input[type="text"]{border:none;background:transparent;padding:9px 11px;min-height:44px;width:100%;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;resize:vertical}
+.pri-tbl input[type="text"]{min-height:unset;resize:none}
+.pri-tbl textarea:focus,.pri-tbl input:focus{background:var(--green-lt)}
+
+/* Submit */
+.submit-wrap{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px;text-align:center;margin-top:8px}
+.submit-wrap p{font-size:13px;color:var(--text2);margin-bottom:16px}
+.btn-sub{background:var(--navy);color:#fff;border:none;border-radius:9px;
+  padding:14px 46px;font-family:'DM Serif Display',serif;font-size:18px;
+  cursor:pointer;transition:all .2s;letter-spacing:.3px}
+.btn-sub:hover{background:var(--blue);transform:translateY(-1px);box-shadow:0 4px 20px rgba(37,99,235,.3)}
+.btn-sub:disabled{background:var(--slate);cursor:not-allowed;transform:none;box-shadow:none}
+
+/* Toast */
+#toast{position:fixed;bottom:26px;right:26px;padding:13px 20px;border-radius:10px;
+  font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(10px);
+  transition:all .3s;pointer-events:none;z-index:999;max-width:320px;line-height:1.4}
+#toast.show{opacity:1;transform:translateY(0)}
+#toast.success{background:var(--green);color:#fff}
+#toast.error{background:var(--red);color:#fff}
+#toast.sending{background:var(--navy);color:#fff}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="h-left">
+      <div class="h-icon">📊</div>
+      <div>
+        <div class="h-title">Weekly Marketing Scorecard</div>
+        <div class="h-sub">Submit weekly · Each entry logs automatically to SharePoint</div>
+      </div>
+    </div>
+    <div class="h-right">
+      <span class="prog-label" id="prog-lbl">0 of 8</span>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+<!-- Meta -->
+<div class="meta-strip">
+  <div class="field">
+    <label for="week_of">Week of <span class="req">*</span></label>
+    <input type="date" id="week_of" name="week_of" required/>
+  </div>
+  <div class="field">
+    <label for="prepared_by">Prepared by <span class="req">*</span></label>
+    <input type="text" id="prepared_by" name="prepared_by" placeholder="Your name" required/>
+  </div>
+  <div class="field">
+    <label>Submitted</label>
+    <input type="text" id="sub_date" readonly style="background:var(--slate-lt);color:var(--slate)"/>
+  </div>
+</div>
+
+<!-- Timer -->
+<div class="timer-bar">
+  <span style="font-size:18px">⏱</span>
+  <span class="timer-label">Time Tracker</span>
+  <span id="timer-display">0:00</span>
+  <button class="t-btn" id="btn-start" type="button">Start Timer</button>
+  <button class="t-btn" id="btn-stop" type="button">Stop</button>
+  <span class="timer-target">Target: 10–20 min</span>
+  <input type="hidden" id="time_spent" name="time_spent"/>
+</div>
+
+<form id="form" novalidate>
+
+<!-- ══ S1 KPI Snapshot ══════════════════════════════════════════════════════ -->
+<div class="card s1" data-section="1">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-num">1</div>
+    <div><div class="card-title">KPI Snapshot</div><div class="card-desc">Executive view · No fluff, just the numbers</div></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <table class="kpi-tbl">
+      <thead><tr><th style="width:32%">Metric</th><th style="width:18%">This Week</th><th style="width:18%">Last Week</th><th>Trend / Note</th></tr></thead>
+      <tbody>
+        <tr><td class="kpi-metric">Website Traffic</td><td><input type="number" name="kpi_traffic_this" placeholder="—"/></td><td><input type="number" name="kpi_traffic_last" placeholder="—"/></td><td class="trend"><input type="text" name="kpi_traffic_trend" placeholder="e.g. +12% vs last week"/></td></tr>
+        <tr><td class="kpi-metric">Leads Generated</td><td><input type="number" name="kpi_leads_this" placeholder="—"/></td><td><input type="number" name="kpi_leads_last" placeholder="—"/></td><td class="trend"><input type="text" name="kpi_leads_trend" placeholder=""/></td></tr>
+        <tr><td class="kpi-metric">Cost Per Lead (CPL)</td><td><input type="text" name="kpi_cpl_this" placeholder="$—"/></td><td><input type="text" name="kpi_cpl_last" placeholder="$—"/></td><td class="trend"><input type="text" name="kpi_cpl_trend" placeholder=""/></td></tr>
+        <tr><td class="kpi-metric">Conversion Rate</td><td><input type="text" name="kpi_conv_this" placeholder="—%"/></td><td><input type="text" name="kpi_conv_last" placeholder="—%"/></td><td class="trend"><input type="text" name="kpi_conv_trend" placeholder=""/></td></tr>
+        <tr><td class="kpi-metric">Ad Spend</td><td><input type="text" name="kpi_spend_this" placeholder="$—"/></td><td><input type="text" name="kpi_spend_last" placeholder="$—"/></td><td class="trend"><input type="text" name="kpi_spend_trend" placeholder=""/></td></tr>
+      </tbody>
+    </table>
+    <div class="field">
+      <label for="key_trend">Key Trend (1 sentence) <span class="req">*</span></label>
+      <textarea id="key_trend" name="key_trend" class="sm" required placeholder="The single most important trend this week…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S2 Channel Performance ═══════════════════════════════════════════════ -->
+<div class="card s2" data-section="2">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-num">2</div>
+    <div><div class="card-title">Channel Performance</div><div class="card-desc">SEO · Paid Ads · Website · Social Media</div></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <div class="sub">
+      <div class="sub-label">SEO</div>
+      <table class="row-tbl">
+        <tr><td class="rl">What was worked on</td><td><textarea name="seo_worked" class="sm" placeholder="Pages, content, technical fixes…"></textarea></td></tr>
+        <tr><td class="rl">Current ranking</td><td><textarea name="seo_ranking" class="sm" placeholder="Key keyword positions / movement…"></textarea></td></tr>
+        <tr><td class="rl">Insights (what we learned)</td><td><textarea name="seo_insights" class="sm" placeholder="What did the data tell us?"></textarea></td></tr>
+        <tr><td class="rl">Next week focus</td><td><textarea name="seo_next" class="sm" placeholder="Top 1-2 priorities…"></textarea></td></tr>
+      </table>
+    </div>
+    <div class="sub">
+      <div class="sub-label">Paid Ads (Google / Social)</div>
+      <table class="row-tbl">
+        <tr><td class="rl">Spend</td><td><input type="text" name="ads_spend" placeholder="$ amount this week"/></td></tr>
+        <tr><td class="rl">Key Metrics (CPL, CTR, Conversions)</td><td><textarea name="ads_metrics" class="sm" placeholder="List the 2-3 numbers that matter most…"></textarea></td></tr>
+        <tr><td class="rl">What's working</td><td><textarea name="ads_working" class="sm" placeholder="Campaigns / audiences performing well…"></textarea></td></tr>
+        <tr><td class="rl">What's not working</td><td><textarea name="ads_notworking" class="sm" placeholder="Be specific — what underperformed?"></textarea></td></tr>
+        <tr><td class="rl">Changes being made</td><td><textarea name="ads_changes" class="sm" placeholder="Adjustments being made…"></textarea></td></tr>
+      </table>
+    </div>
+    <div class="sub">
+      <div class="sub-label">Website</div>
+      <table class="row-tbl">
+        <tr><td class="rl">Updates made</td><td><textarea name="web_updates" class="sm" placeholder="Pages updated, new content, fixes…"></textarea></td></tr>
+        <tr><td class="rl">Conversion improvements</td><td><textarea name="web_conv" class="sm" placeholder="CTA changes, form edits, page tests…"></textarea></td></tr>
+        <tr><td class="rl">Issues identified</td><td><textarea name="web_issues" class="sm" placeholder="Bugs, slow pages, broken links…"></textarea></td></tr>
+        <tr><td class="rl">Next steps</td><td><textarea name="web_next" class="sm" placeholder="What needs to happen next week?"></textarea></td></tr>
+      </table>
+    </div>
+    <div class="sub">
+      <div class="sub-label">Social Media (Organic)</div>
+      <table class="row-tbl">
+        <tr><td class="rl">Posts published</td><td><input type="number" name="social_posts" placeholder="# of posts"/></td></tr>
+        <tr><td class="rl">Engagement performance</td><td><textarea name="social_engagement" class="sm" placeholder="Likes, shares, reach vs. prior week…"></textarea></td></tr>
+        <tr><td class="rl">What content is resonating</td><td><textarea name="social_resonating" class="sm" placeholder="Which posts/topics got the best response?"></textarea></td></tr>
+        <tr><td class="rl">Next week plan</td><td><textarea name="social_next" class="sm" placeholder="Topics, formats, platforms planned…"></textarea></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S3 Prospect Management ════════════════════════════════════════════════ -->
+<div class="card s3" data-section="3">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-num">3</div>
+    <div><div class="card-title">Prospect Management &amp; Sales Handoff</div><div class="card-desc">Pipeline health · High-priority accounts · Sales alignment</div></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="note-text">Track how marketing is managing prospects for sales reps, with focus on high-priority accounts.</p>
+    <div class="sub">
+      <div class="sub-label">Pipeline Metrics</div>
+      <table class="pro-tbl">
+        <thead><tr><th style="width:44%">Metric</th><th style="width:18%">This Week</th><th>Notes / Actions</th></tr></thead>
+        <tbody>
+          <tr><td class="pro-metric">Total Active Prospects</td><td><input type="number" name="p_total"/></td><td><textarea name="p_total_notes" class="sm"></textarea></td></tr>
+          <tr><td class="pro-metric">High-Priority Prospects</td><td><input type="number" name="p_highpri"/></td><td><textarea name="p_highpri_notes" class="sm"></textarea></td></tr>
+          <tr><td class="pro-metric">New Prospects Added</td><td><input type="number" name="p_new"/></td><td><textarea name="p_new_notes" class="sm"></textarea></td></tr>
+          <tr><td class="pro-metric">Prospects Contacted This Week</td><td><input type="number" name="p_contacted"/></td><td><textarea name="p_contacted_notes" class="sm"></textarea></td></tr>
+          <tr><td class="pro-metric">Prospects Advanced in Pipeline</td><td><input type="number" name="p_advanced"/></td><td><textarea name="p_advanced_notes" class="sm"></textarea></td></tr>
+          <tr><td class="pro-metric">Stalled / At-Risk Prospects</td><td><input type="number" name="p_stalled"/></td><td><textarea name="p_stalled_notes" class="sm"></textarea></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sub">
+      <div class="sub-label">High-Priority Prospect Focus</div>
+      <table class="row-tbl teal">
+        <tr><td class="rl">Top 3 high-priority prospects this week</td><td><textarea name="p_top3" placeholder="Name / company and why they are priority…"></textarea></td></tr>
+        <tr><td class="rl">Status / Next action for each</td><td><textarea name="p_top3_status" placeholder="Where are they in the process?"></textarea></td></tr>
+        <tr><td class="rl">Blockers or support needed from sales</td><td><textarea name="p_blockers" class="sm" placeholder="What does marketing need from sales reps?"></textarea></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S4 Google Reviews ══════════════════════════════════════════════════════ -->
+<div class="card s4" data-section="4">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-num">4</div>
+    <div><div class="card-title">Google Reviews</div><div class="card-desc">Reputation monitoring · Rating movement · Review strategy</div></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="note-text">Monitor online reputation. Track new reviews and overall rating movement weekly.</p>
+    <div class="sub">
+      <div class="sub-label">Review Metrics</div>
+      <table class="rev-tbl">
+        <thead><tr><th style="width:44%">Metric</th><th style="width:18%">Value</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="rev-metric">Overall Rating (Current)</td><td><input type="number" name="rev_cur" step="0.1" min="1" max="5" placeholder="4.7"/></td><td><textarea name="rev_cur_notes" class="sm"></textarea></td></tr>
+          <tr><td class="rev-metric">Rating Last Week</td><td><input type="number" name="rev_last" step="0.1" min="1" max="5" placeholder="4.6"/></td><td><textarea name="rev_last_notes" class="sm" placeholder="movement / context"></textarea></td></tr>
+          <tr><td class="rev-metric">New Reviews This Week</td><td><input type="number" name="rev_new"/></td><td><textarea name="rev_new_notes" class="sm"></textarea></td></tr>
+          <tr><td class="rev-metric">Total Review Count</td><td><input type="number" name="rev_total"/></td><td><textarea name="rev_total_notes" class="sm"></textarea></td></tr>
+          <tr><td class="rev-metric">Positive Reviews (4-5★)</td><td><input type="number" name="rev_pos"/></td><td><textarea name="rev_pos_notes" class="sm"></textarea></td></tr>
+          <tr><td class="rev-metric">Negative Reviews (1-3★)</td><td><input type="number" name="rev_neg"/></td><td><textarea name="rev_neg_notes" class="sm"></textarea></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sub">
+      <div class="sub-label">Review Highlights</div>
+      <table class="row-tbl purple">
+        <tr><td class="rl">Notable positive feedback this week</td><td><textarea name="rev_pos_highlight" class="sm" placeholder="Themes or specific comments worth noting…"></textarea></td></tr>
+        <tr><td class="rl">Notable negative feedback / concerns</td><td><textarea name="rev_neg_highlight" class="sm" placeholder="Any issues raised by reviewers?"></textarea></td></tr>
+        <tr><td class="rl">Response actions taken</td><td><textarea name="rev_responses" class="sm" placeholder="Did we respond to any reviews?"></textarea></td></tr>
+        <tr><td class="rl">Strategy to generate more reviews</td><td><textarea name="rev_strategy" class="sm" placeholder="What are we doing to encourage more reviews?"></textarea></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S5 Wins & Problems ════════════════════════════════════════════════════ -->
+<div class="card s5" data-section="5">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-num">5</div>
+    <div><div class="card-title">Wins &amp; Problems</div><div class="card-desc">Max 3 of each · Be specific</div></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <div class="wp-grid">
+      <div class="wp-col wc">
+        <div class="wp-head win">✓&nbsp; WINS (max 3)</div>
+        <div class="wp-item"><span class="wp-num win">1.</span><textarea name="win1" class="sm" placeholder="Specific, metric-backed win…"></textarea></div>
+        <div class="wp-item"><span class="wp-num win">2.</span><textarea name="win2" class="sm" placeholder=""></textarea></div>
+        <div class="wp-item"><span class="wp-num win">3.</span><textarea name="win3" class="sm" placeholder=""></textarea></div>
+      </div>
+      <div class="wp-col pc">
+        <div class="wp-head prob">⚠&nbsp; PROBLEMS / RISKS (max 3)</div>
+        <div class="wp-item"><span class="wp-num prob">1.</span><textarea name="prob1" class="sm" placeholder="What is at risk or underperforming?"></textarea></div>
+        <div class="wp-item"><span class="wp-num prob">2.</span><textarea name="prob2" class="sm" placeholder=""></textarea></div>
+        <div class="wp-item"><span class="wp-num prob">3.</span><textarea name="prob3" class="sm" placeholder=""></textarea></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S6 Next Week Priorities ══════════════════════════════════════════════ -->
+<div class="card s6" data-section="6">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-num">6</div>
+    <div><div class="card-title">Next Week Priorities</div><div class="card-desc">Top 3–5 · Outcome-focused, not just tasks</div></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <p class="note-text">Must be outcome-focused, not just tasks. Example: "Reduce CPL below $40" not "work on ads."</p>
+    <table class="pri-tbl">
+      <thead><tr><th>#</th><th style="width:48%">Priority / Outcome</th><th>Owner</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="pri-n">1</td><td><textarea name="pri1" class="sm" placeholder="What result are you driving?"></textarea></td><td><input type="text" name="pri1_owner" placeholder="Name"/></td><td><input type="text" name="pri1_status" placeholder="On track…"/></td></tr>
+        <tr><td class="pri-n">2</td><td><textarea name="pri2" class="sm"></textarea></td><td><input type="text" name="pri2_owner"/></td><td><input type="text" name="pri2_status"/></td></tr>
+        <tr><td class="pri-n">3</td><td><textarea name="pri3" class="sm"></textarea></td><td><input type="text" name="pri3_owner"/></td><td><input type="text" name="pri3_status"/></td></tr>
+        <tr><td class="pri-n">4</td><td><textarea name="pri4" class="sm"></textarea></td><td><input type="text" name="pri4_owner"/></td><td><input type="text" name="pri4_status"/></td></tr>
+        <tr><td class="pri-n">5</td><td><textarea name="pri5" class="sm"></textarea></td><td><input type="text" name="pri5_owner"/></td><td><input type="text" name="pri5_status"/></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ S7 Go-To-Market ═══════════════════════════════════════════════════════ -->
+<div class="card s7" data-section="7">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-num">7</div>
+    <div><div class="card-title">Go-To-Market Focus</div><div class="card-desc">Weekly campaign &amp; segment alignment</div></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <table class="row-tbl">
+      <tr><td class="rl">Target Segment(s)</td><td><input type="text" name="gtm_segments" placeholder="Who are we focused on this week?"/></td></tr>
+      <tr><td class="rl">Campaign Focus</td><td><input type="text" name="gtm_campaign" placeholder="Active campaign name or theme…"/></td></tr>
+      <tr><td class="rl">Key Accounts / Opportunities</td><td><textarea name="gtm_accounts" class="sm" placeholder="Any named accounts being targeted?"></textarea></td></tr>
+      <tr><td class="rl">Channels Being Used</td><td><input type="text" name="gtm_channels" placeholder="e.g. Google Ads, Email, LinkedIn…"/></td></tr>
+      <tr><td class="rl">Expected Outcome</td><td><textarea name="gtm_outcome" class="sm" placeholder="What does success look like this week?"></textarea></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ══ S8 Key Insights ══════════════════════════════════════════════════════ -->
+<div class="card s8" data-section="8">
+  <div class="card-header" onclick="toggle(this)">
+    <div class="card-num">8</div>
+    <div><div class="card-title">Key Insights &amp; Strategy</div><div class="card-desc">Step back · Think bigger picture</div></div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">
+    <table class="row-tbl">
+      <tr><td class="rl">What are we learning about our market?</td><td><textarea name="ins_learning" placeholder="Patterns, buyer behavior, competitive signals…"></textarea></td></tr>
+      <tr><td class="rl">What should we double down on?</td><td><textarea name="ins_double" placeholder="What is working well enough to invest more?"></textarea></td></tr>
+      <tr><td class="rl">What should we stop doing?</td><td><textarea name="ins_stop" placeholder="Be honest — what is wasting time or budget?"></textarea></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- Submit -->
+<div class="submit-wrap">
+  <p>Submitting will add a new row to your SharePoint Excel file automatically.</p>
+  <button type="submit" class="btn-sub" id="btn-sub">Submit Scorecard →</button>
+</div>
+
+</form>
+</div><!-- /page -->
+
+<div id="toast"></div>
+
+<script>
+// ─── CONFIG ─────────────────────────────────────────────────────────────────
+// After setting up Power Automate, replace the line below with your webhook URL
+const WEBHOOK_URL = https://defaulta115f34100dc4f5bbc80f814b00a30.ef.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/53176dec5cf14e4ab2b5bfce14bb7b1a/triggers/manual/paths/invoke?api-version=1;
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+document.getElementById('sub_date').value = new Date().toLocaleDateString('en-US',
+  {weekday:'short',year:'numeric',month:'short',day:'numeric'});
+
+// ─── Timer ───────────────────────────────────────────────────────────────────
+let timerSec=0, timerInterval=null, running=false;
+const disp = document.getElementById('timer-display');
+
+document.getElementById('btn-start').addEventListener('click',()=>{
+  if(running) return;
+  running=true;
+  document.getElementById('btn-start').style.display='none';
+  document.getElementById('btn-stop').style.display='inline-block';
+  timerInterval=setInterval(()=>{
+    timerSec++;
+    const m=Math.floor(timerSec/60), s=timerSec%60;
+    disp.textContent=`${m}:${s.toString().padStart(2,'0')}`;
+    if(timerSec/60>20) disp.style.color='var(--red)';
+  },1000);
+});
+
+document.getElementById('btn-stop').addEventListener('click',()=>{
+  clearInterval(timerInterval); running=false;
+  document.getElementById('btn-stop').style.display='none';
+  document.getElementById('btn-start').style.display='inline-block';
+  document.getElementById('btn-start').textContent='Resume';
+  document.getElementById('time_spent').value=Math.round(timerSec/60)+' min';
+});
+
+// ─── Collapse / Progress ────────────────────────────────────────────────────
+function toggle(h){ h.closest('.card').classList.toggle('collapsed'); updateProg(); }
+
+function updateProg(){
+  const cards=[...document.querySelectorAll('.card[data-section]')];
+  const filled=cards.filter(c=>[...c.querySelectorAll('input:not([type=hidden]),textarea')]
+    .some(el=>el.value.trim())).length;
+  document.getElementById('prog-fill').style.width=(filled/cards.length*100)+'%';
+  document.getElementById('prog-lbl').textContent=`${filled} of ${cards.length}`;
+}
+document.querySelectorAll('input,textarea').forEach(el=>el.addEventListener('input',updateProg));
+
+// ─── Toast ───────────────────────────────────────────────────────────────────
+function toast(msg,type,dur=4500){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className=`show ${type}`;
+  if(dur) setTimeout(()=>el.className='',dur);
+}
+
+// ─── Collect ─────────────────────────────────────────────────────────────────
+function collect(){
+  const data={};
+  document.getElementById('form').querySelectorAll('[name]').forEach(el=>{
+    if(el.name) data[el.name]=el.value.trim();
+  });
+  data.week_of=document.getElementById('week_of').value;
+  data.prepared_by=document.getElementById('prepared_by').value.trim();
+  data.submission_date=document.getElementById('sub_date').value;
+  data.time_spent=document.getElementById('time_spent').value||Math.round(timerSec/60)+' min';
+  return data;
+}
+
+// ─── Submit ──────────────────────────────────────────────────────────────────
+document.getElementById('form').addEventListener('submit',async e=>{
+  e.preventDefault();
+
+  // Basic validation
+  let ok=true;
+  ['week_of','prepared_by','key_trend'].forEach(id=>{
+    const el=document.getElementById(id)||document.querySelector(`[name="${id}"]`);
+    if(el&&!el.value.trim()){ el.classList.add('err'); ok=false; }
+    else if(el) el.classList.remove('err');
+  });
+  if(!ok){
+    toast('Please fill in the required fields (highlighted red).','error');
+    document.querySelector('.err')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+
+  if(WEBHOOK_URL==='YOUR_POWER_AUTOMATE_WEBHOOK_URL_HERE'){
+    toast('Webhook URL not configured. See SETUP.md to connect SharePoint.','error',7000);
+    return;
+  }
+
+  const btn=document.getElementById('btn-sub');
+  btn.disabled=true; btn.textContent='Submitting…';
+  toast('📤 Sending to SharePoint…','sending',0);
+
+  if(running){ clearInterval(timerInterval); document.getElementById('time_spent').value=Math.round(timerSec/60)+' min'; }
+
+  try{
+    const res=await fetch(WEBHOOK_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(collect())
+    });
+    if(res.ok||res.status===202){
+      toast('✅ Submitted! New row added to SharePoint Excel.','success',7000);
+      btn.textContent='Submitted ✓';
+      btn.style.background='var(--green)';
+      window.scrollTo({top:0,behavior:'smooth'});
+    } else { throw new Error(`HTTP ${res.status}`); }
+  } catch(err){
+    toast(`❌ Submission failed: ${err.message}`,'error',8000);
+    btn.disabled=false; btn.textContent='Retry →';
+  }
+});
+
+document.querySelectorAll('input[required],textarea[required]').forEach(el=>
+  el.addEventListener('input',()=>el.classList.remove('err')));
+</script>
+</body>
+</html>
